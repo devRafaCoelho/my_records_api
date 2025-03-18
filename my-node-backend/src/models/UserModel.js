@@ -1,0 +1,57 @@
+const db = require("../config/db");
+
+class UserModel {
+  constructor({ id, firstName, lastName, email, cpf, phone, password }) {
+    this.id = id;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.email = email;
+    this.cpf = cpf;
+    this.phone = phone;
+    this.password = password;
+  }
+
+  async create() {
+    const query = `
+            INSERT INTO users (firstName, lastName, email, cpf, phone, password)
+            VALUES ($1, $2, $3, $4, $5, $6)
+            RETURNING *;
+        `;
+    const values = [
+      this.firstName,
+      this.lastName,
+      this.email,
+      this.cpf,
+      this.phone,
+      this.password,
+    ];
+    const result = await db.query(query, values);
+    return result.rows[0];
+  }
+
+  static async findById(id) {
+    const query = `SELECT * FROM users WHERE id = $1;`;
+    const result = await db.query(query, [id]);
+    return result.rows[0];
+  }
+
+  static async findAll() {
+    const query = `SELECT * FROM users;`;
+    const result = await db.query(query);
+    return result.rows;
+  }
+
+  static async findByEmail(email) {
+    const query = `SELECT * FROM users WHERE email = $1;`;
+    const result = await db.query(query, [email]);
+    return result.rows[0];
+  }
+
+  static async findByCpf(cpf) {
+    const query = `SELECT * FROM users WHERE cpf = $1;`;
+    const result = await db.query(query, [cpf]);
+    return result.rows[0];
+  }
+}
+
+module.exports = UserModel;
