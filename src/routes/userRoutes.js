@@ -10,7 +10,6 @@ const setUserRoutes = (app) => {
   const router = express.Router();
   const userController = new UserController();
 
-  // Rotas públicas (não requerem autenticação)
   router.post(
     "/users",
     validateSchema(userSchema),
@@ -25,10 +24,9 @@ const setUserRoutes = (app) => {
     userController.login.bind(userController)
   );
 
-  // Rotas protegidas (requerem autenticação)
   const protectedRouter = express.Router();
 
-  protectedRouter.use(validateAuthentication); // Aplica o middleware de autenticação a todas as rotas abaixo
+  protectedRouter.use(validateAuthentication);
 
   protectedRouter.get(
     "/users",
@@ -52,7 +50,6 @@ const setUserRoutes = (app) => {
     userController.deleteUser.bind(userController)
   );
 
-  // Adiciona as rotas protegidas ao router principal
   router.use(protectedRouter);
 
   app.use("/api", router);

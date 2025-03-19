@@ -1,6 +1,6 @@
 const db = require("../config/db");
 
-class Record {
+class RecordModel {
   constructor({ id, id_user, description, due_date, value, paid_out, status }) {
     this.id = id;
     this.id_user = id_user;
@@ -8,11 +8,10 @@ class Record {
     this.due_date = due_date;
     this.value = value;
     this.paid_out = paid_out;
-    this.status = status; // Adiciona o status
+    this.status = status;
   }
 
-  // Método para salvar o registro no banco de dados
-  async save() {
+  async create() {
     const query = `
             INSERT INTO records (id_user, description, due_date, value, paid_out)
             VALUES ($1, $2, $3, $4, $5)
@@ -29,19 +28,40 @@ class Record {
     return result.rows[0];
   }
 
-  // Método para buscar um registro pelo ID (usando a view records_view)
+  static async findAll(id_user) {
+    const query = `SELECT * FROM records_view WHERE id_user = $1;`;
+    const result = await db.query(query, [id_user]);
+    return result.rows;
+  }
+
   static async findById(id) {
     const query = `SELECT * FROM records_view WHERE id = $1;`;
     const result = await db.query(query, [id]);
     return result.rows[0];
   }
 
-  // Método para buscar todos os registros (usando a view records_view)
-  static async findAll() {
-    const query = `SELECT * FROM records_view;`;
-    const result = await db.query(query);
-    return result.rows;
+  static async update(id, updatedData) {
+    const fields = Object.keys(updatedData)
+      .map((key, index) => `${key} = $${index + 2}`)
+      .join(", ");
+    const values = [id, ...Object.values(updatedData)];
+
+    const query = `
+      UPDATE records
+      SET ${fields}
+      WHERE id = $1
+      RETURNING *;
+    `;
+
+    const result = await db.query(query, values);
+    return result.rows[0];
+  }
+
+  static async delete(id) {
+    const query = `DELETE FROM records WHERE id = $1 RETURNING *;`;
+    const result = await db.query(query, [id]);
+    return result.rows[0];
   }
 }
 
-module.exports = Record;
+module.exports = RecordModel;
