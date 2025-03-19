@@ -62,6 +62,35 @@ class RecordModel {
     const result = await db.query(query, [id]);
     return result.rows[0];
   }
+
+  static async findAllWithFilters(filters) {
+    const conditions = [];
+    const values = [];
+
+    conditions.push("id_user = $1");
+    values.push(filters.id_user);
+
+    if (filters.due_date) {
+      conditions.push(`due_date = $${values.length + 1}`);
+      values.push(filters.due_date);
+    }
+    if (filters.paid_out !== undefined) {
+      conditions.push(`paid_out = $${values.length + 1}`);
+      values.push(filters.paid_out);
+    }
+    if (filters.status) {
+      conditions.push(`status = $${values.length + 1}`);
+      values.push(filters.status);
+    }
+
+    const query = `
+      SELECT * FROM records_view
+      WHERE ${conditions.join(" AND ")};
+    `;
+
+    const result = await db.query(query, values);
+    return result.rows;
+  }
 }
 
 module.exports = RecordModel;
