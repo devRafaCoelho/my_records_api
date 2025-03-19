@@ -49,30 +49,6 @@ class UserController {
     }
   }
 
-  async getAllUsers(req, res) {
-    try {
-      const users = await UserModel.findAll();
-      res.status(200).json(users);
-    } catch (error) {
-      console.error(error);
-      res.status(500).send("Error retrieving users");
-    }
-  }
-
-  async getUserById(req, res) {
-    try {
-      const { id } = req.params;
-      const user = await UserModel.findById(id);
-      if (!user) {
-        return res.status(404).send("User not found");
-      }
-      res.status(200).json(user);
-    } catch (error) {
-      console.error(error);
-      res.status(500).send("Error retrieving user");
-    }
-  }
-
   async getUserByLogin(req, res) {
     try {
       const user = req.user;
