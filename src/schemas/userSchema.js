@@ -1,5 +1,5 @@
 const Joi = require("joi");
-const { cpf: cpfValidator } = require("cpf-cnpj-validator"); // Importa a biblioteca correta
+const { cpf: cpfValidator } = require("cpf-cnpj-validator");
 const { isValidNumber } = require("libphonenumber-js");
 
 const userSchema = Joi.object({

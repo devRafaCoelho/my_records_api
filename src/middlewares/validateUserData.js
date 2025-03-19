@@ -1,9 +1,10 @@
+const bcrypt = require("bcrypt");
 const UserModel = require("../models/UserModel");
 
 const validateUserData =
   (options = {}) =>
   async (req, res, next) => {
-    const { email, cpf } = req.body;
+    const { email, cpf, password } = req.body;
     const errors = [];
 
     if (options.checkEmail && email) {
@@ -23,6 +24,36 @@ const validateUserData =
           message: "CPF already registered.",
           type: "cpf",
         });
+      }
+    }
+
+    if (options.checkEmailExists && email) {
+      const user = await UserModel.findByEmail(email);
+      if (!user) {
+        errors.push({
+          message: "User not found.",
+          type: "email",
+        });
+      } else {
+        req.user = user;
+      }
+    }
+
+    if (options.checkPassword && password) {
+      const user = req.user;
+      if (!user) {
+        errors.push({
+          message: "User not found.",
+          type: "password",
+        });
+      } else {
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+          errors.push({
+            message: "Invalid password.",
+            type: "password",
+          });
+        }
       }
     }
 
