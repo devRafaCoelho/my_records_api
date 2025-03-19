@@ -30,6 +30,19 @@ const setUserRoutes = (app) => {
     userController.getUserByLogin.bind(userController)
   );
 
+  router.put(
+    "/users",
+    validateAuthentication,
+    validateSchema(userSchema),
+    validateUserData({
+      checkIdExists: true,
+      checkPassword: true,
+      checkEmail: true,
+      checkCpf: true,
+    }),
+    userController.updateUser.bind(userController)
+  );
+
   app.use("/api", router);
 };
 

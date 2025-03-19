@@ -29,16 +29,16 @@ class UserModel {
     return result.rows[0];
   }
 
-  static async findById(id) {
-    const query = `SELECT * FROM users WHERE id = $1;`;
-    const result = await db.query(query, [id]);
-    return result.rows[0];
-  }
-
   static async findAll() {
     const query = `SELECT * FROM users;`;
     const result = await db.query(query);
     return result.rows;
+  }
+
+  static async findById(id) {
+    const query = `SELECT * FROM users WHERE id = $1;`;
+    const result = await db.query(query, [id]);
+    return result.rows[0];
   }
 
   static async findByEmail(email) {
@@ -50,6 +50,29 @@ class UserModel {
   static async findByCpf(cpf) {
     const query = `SELECT * FROM users WHERE cpf = $1;`;
     const result = await db.query(query, [cpf]);
+    return result.rows[0];
+  }
+
+  static async update(id, updatedData) {
+    const fields = Object.keys(updatedData)
+      .map((key, index) => `${key} = $${index + 2}`)
+      .join(", ");
+    const values = [id, ...Object.values(updatedData)];
+
+    const query = `
+      UPDATE users
+      SET ${fields}
+      WHERE id = $1
+      RETURNING *;
+    `;
+
+    const result = await db.query(query, values);
+    return result.rows[0];
+  }
+
+  static async delete(id) {
+    const query = `DELETE FROM users WHERE id = $1 RETURNING *;`;
+    const result = await db.query(query, [id]);
     return result.rows[0];
   }
 }

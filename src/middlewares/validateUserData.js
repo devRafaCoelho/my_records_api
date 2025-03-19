@@ -9,7 +9,7 @@ const validateUserData =
 
     if (options.checkEmail && email) {
       const emailExists = await UserModel.findByEmail(email);
-      if (emailExists) {
+      if (emailExists && (!req.user || emailExists.id !== req.user.id)) {
         errors.push({
           message: "E-mail already registered.",
           type: "email",
@@ -19,7 +19,7 @@ const validateUserData =
 
     if (options.checkCpf && cpf) {
       const cpfExists = await UserModel.findByCpf(cpf);
-      if (cpfExists) {
+      if (cpfExists && (!req.user || cpfExists.id !== req.user.id)) {
         errors.push({
           message: "CPF already registered.",
           type: "cpf",
@@ -33,6 +33,18 @@ const validateUserData =
         errors.push({
           message: "User not found.",
           type: "email",
+        });
+      } else {
+        req.user = user;
+      }
+    }
+
+    if (options.checkIdExists && req.user && req.user.id) {
+      const user = await UserModel.findById(req.user.id);
+      if (!user) {
+        errors.push({
+          message: "User not found.",
+          type: "id",
         });
       } else {
         req.user = user;

@@ -85,6 +85,28 @@ class UserController {
       res.status(500).send("Error retrieving user");
     }
   }
+
+  async updateUser(req, res) {
+    try {
+      const { id } = req.user;
+      const data = req.body;
+
+      if (data.password) {
+        data.password = await bcrypt.hash(data.password, 10);
+      }
+
+      const updatedUser = await UserModel.update(id, data);
+
+      if (!updatedUser) {
+        return res.status(404).send("User not found");
+      }
+
+      return res.status(204).send();
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  }
 }
 
 module.exports = UserController;
