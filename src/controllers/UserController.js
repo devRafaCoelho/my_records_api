@@ -1,5 +1,7 @@
 const bcrypt = require("bcrypt");
 const UserModel = require("../models/UserModel");
+const transporter = require("../config/email");
+const compilerHtml = require("../utils/compilerHtml");
 
 class UserController {
   async getAllUsers(req, res) {
@@ -34,6 +36,18 @@ class UserController {
 
       const user = new UserModel(userData);
       const newUser = await user.create();
+
+      const html = await compilerHtml("./src/templates/createUser.html", {
+        firstName: userData.firstName,
+      });
+
+      await transporter.sendMail({
+        from: `${process.env.EMAIL_NAME} <${process.env.EMAIL_EMAIL}>`,
+        to: `${userData.firstName} <${userData.email}>`,
+        subject: "Welcome!!",
+        html,
+      });
+
       res.status(201).json(newUser);
     } catch (error) {
       console.error(error);
