@@ -107,6 +107,22 @@ class UserController {
       return res.status(500).json({ message: "Internal server error" });
     }
   }
+
+  async deleteUser(req, res) {
+    try {
+      const { id } = req.user;
+      const deletedUser = await UserModel.delete(id);
+
+      if (!deletedUser) {
+        return res.status(404).send("User not found");
+      }
+
+      return res.status(204).send();
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  }
 }
 
 module.exports = UserController;

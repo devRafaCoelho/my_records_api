@@ -43,6 +43,12 @@ const setUserRoutes = (app) => {
     userController.updateUser.bind(userController)
   );
 
+  router.delete(
+    "/users",
+    validateAuthentication,
+    userController.deleteUser.bind(userController)
+  );
+
   app.use("/api", router);
 };
 
