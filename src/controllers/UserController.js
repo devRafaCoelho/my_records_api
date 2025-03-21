@@ -74,10 +74,12 @@ class UserController {
       const updatedUser = await UserModel.update(id, data);
 
       if (!updatedUser) {
-        return res.status(404).send("User not found");
+        return res.status(404).json({ message: "User not found" });
       }
 
-      return res.status(204).send();
+      const { password: _, ...userData } = updatedUser;
+
+      return res.status(200).json(userData);
     } catch (error) {
       console.error(error);
       return res.status(500).json({ message: "Internal server error" });
@@ -86,10 +88,9 @@ class UserController {
 
   async updateUserPassword(req, res) {
     try {
-      const { id } = req.user; // ID do usuário logado
-      const { newPassword } = req.body; // Nova senha já validada pelo middleware
+      const { id } = req.user;
+      const { newPassword } = req.body;
 
-      // Atualiza a senha com o método newPassword do UserModel
       const hashedPassword = await bcrypt.hash(newPassword, 10);
       const updatedUser = await UserModel.newPassword(id, hashedPassword);
 
