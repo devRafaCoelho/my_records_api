@@ -70,6 +70,19 @@ class UserModel {
     return result.rows[0];
   }
 
+  static async newPassword(id, newPassword) {
+    const query = `
+      UPDATE users
+      SET password = $2
+      WHERE id = $1
+      RETURNING *;
+    `;
+    const values = [id, newPassword];
+
+    const result = await db.query(query, values);
+    return result.rows[0];
+  }
+
   static async delete(id) {
     const queryRecord = `DELETE FROM records WHERE id_user = $1 RETURNING *;`;
     await db.query(queryRecord, [id]);

@@ -5,6 +5,7 @@ const validateUserData = require("../middlewares/validateUserData");
 const validateAuthentication = require("../middlewares/validateAuthentication");
 const userSchema = require("../schemas/userSchema");
 const loginSchema = require("../schemas/loginSchema");
+const newPasswordSchema = require("../schemas/newPasswordSchema");
 
 const setUserRoutes = (app) => {
   const router = express.Router();
@@ -44,6 +45,15 @@ const setUserRoutes = (app) => {
     }),
     userController.updateUser.bind(userController)
   );
+
+  protectedRouter.put(
+    "/users/account",
+    validateSchema(newPasswordSchema),
+    validateUserData({ checkPassword: true, checkIdExists: true }),
+    userController.updateUserPassword.bind(userController)
+  );
+
+  protectedRouter.put("/users/account", validateSchema(newPasswordSchema));
 
   protectedRouter.delete(
     "/users",

@@ -84,6 +84,26 @@ class UserController {
     }
   }
 
+  async updateUserPassword(req, res) {
+    try {
+      const { id } = req.user; // ID do usuário logado
+      const { newPassword } = req.body; // Nova senha já validada pelo middleware
+
+      // Atualiza a senha com o método newPassword do UserModel
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      const updatedUser = await UserModel.newPassword(id, hashedPassword);
+
+      if (!updatedUser) {
+        return res.status(404).json({ message: "User not found." });
+      }
+
+      return res.status(204).send();
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: "Internal server error" });
+    }
+  }
+
   async deleteUser(req, res) {
     try {
       const { id } = req.user;
