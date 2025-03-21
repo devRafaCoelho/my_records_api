@@ -71,6 +71,9 @@ class UserModel {
   }
 
   static async delete(id) {
+    const queryRecord = `DELETE FROM records WHERE id_user = $1 RETURNING *;`;
+    await db.query(queryRecord, [id]);
+
     const query = `DELETE FROM users WHERE id = $1 RETURNING *;`;
     const result = await db.query(query, [id]);
     return result.rows[0];
