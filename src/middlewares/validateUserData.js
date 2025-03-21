@@ -31,7 +31,7 @@ const validateUserData =
       const user = await UserModel.findByEmail(email);
       if (!user) {
         errors.push({
-          message: "User not found.",
+          message: "Invalid email or password.",
           type: "email",
         });
       } else {
@@ -54,15 +54,23 @@ const validateUserData =
     if (options.checkPassword && password) {
       const user = req.user;
       if (!user) {
+        const message =
+          req.path === "/login"
+            ? "Invalid email or password."
+            : "User not found.";
         errors.push({
-          message: "User not found.",
+          message,
           type: "password",
         });
       } else {
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
+          const message =
+            req.path === "/login"
+              ? "Invalid email or password."
+              : "Invalid current password.";
           errors.push({
-            message: "Invalid password.",
+            message,
             type: "password",
           });
         }
