@@ -1,8 +1,8 @@
 const formatCurrency = (value) => {
   const number = parseFloat(value);
-  return number.toLocaleString("pt-BR", {
+  return number.toLocaleString("en-US", {
     style: "currency",
-    currency: "BRL",
+    currency: "USD",
   });
 };
 

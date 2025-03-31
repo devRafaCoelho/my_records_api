@@ -6,8 +6,8 @@ const recordSchema = Joi.object({
     "any.required": "The description is required.",
     "string.empty": "The description is required.",
   }),
-  due_date: Joi.date().format("DD-MM-YYYY").required().messages({
-    "date.format": "The due date must be in the format DD-MM-YYYY.",
+  due_date: Joi.date().required().messages({
+    "date.format": "The due date must be in the format YYYY-MM-DD.",
     "any.required": "The due date is required.",
     "date.base": "The due date must be a valid date.",
   }),
