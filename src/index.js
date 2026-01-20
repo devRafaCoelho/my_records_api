@@ -17,7 +17,7 @@ app.get("/", (req, res) => {
   res.json({
     status: "API is running",
     timestamp: new Date(),
-    service: "My Records API",
+    service: "My Products API",
   });
 });
 

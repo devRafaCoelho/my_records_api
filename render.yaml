@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: my-records-api
+    name: my-products-api
     env: node
     buildCommand: npm install
     startCommand: npm start
