@@ -12,6 +12,15 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// Health check route
+app.get("/", (req, res) => {
+  res.json({
+    status: "API is running",
+    timestamp: new Date(),
+    service: "My Records API",
+  });
+});
+
 setUserRoutes(app);
 setRecordRoutes(app);
 
